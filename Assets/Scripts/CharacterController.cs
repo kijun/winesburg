@@ -38,7 +38,6 @@ public class CharacterController : MonoBehaviour {
 	void Update () {
 //        UpdateSpriteWithDirection(direction);
         // TODO: refactor view
-        Debug.Log("gaaa");
         if (newDirection != direction) {
             spriteRenderer.sprite = dirToSprites[newDirection][0];
             direction = newDirection;
@@ -56,10 +55,8 @@ public class CharacterController : MonoBehaviour {
             var s1 = spritesForCurAnim[1];
             if (spriteRenderer.sprite == s0) {
                 spriteRenderer.sprite = s1;
-                Debug.Log("0");
             } else {
                 spriteRenderer.sprite = s0;
-                Debug.Log("1");
             }
             prevAnimTimestamp = Time.time;
         }
