@@ -20,7 +20,6 @@ public class EnemyAI : MonoBehaviour {
         nav = GetComponent<SpriteNavAgent>();
     }
     
-    
     void Update () {
         // If the player is in sight and is alive...
 //        if(enemySight.playerInSight && playerHealth.health > 0f)

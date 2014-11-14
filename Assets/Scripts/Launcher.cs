@@ -8,7 +8,7 @@ public class Launcher : MonoBehaviour {
     public Int2 startPos;
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
         Tile.SetCamera(mainCamera);
         Tile.LoadLevel(myLevel);
     }
