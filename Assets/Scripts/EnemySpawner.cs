@@ -5,6 +5,7 @@ using SpriteTile;
 public class EnemySpawner : MonoBehaviour {
 
     public GameObject enemyPrefab;
+    public int numberOfEnemies=10;
 
     GameObject[] enemies;
 
@@ -14,11 +15,11 @@ public class EnemySpawner : MonoBehaviour {
         int width = mapSize.x;
         int height = mapSize.y;
 
-        enemies = new GameObject[2];
+        enemies = new GameObject[numberOfEnemies];
         for (int i = 0; i < enemies.Length; i++) {
             Int2 pos;
             do {
-                pos = new Int2(Random.Range(0,10), Random.Range(0,10));
+                pos = new Int2(Random.Range(1,25), Random.Range(1,25));
                 Debug.Log("Pos = " + pos);
             } while (Tile.GetCollider(pos));
 
@@ -27,6 +28,7 @@ public class EnemySpawner : MonoBehaviour {
             enemyAI.SetMapPosition(pos);
             enemies[i] = enemy;
             enemyAI.patrolWayPoints = new []{pos.ToVector2(), new Vector2(1,5)};
+            enemyAI.generatePath();
         }
 	}
 	
