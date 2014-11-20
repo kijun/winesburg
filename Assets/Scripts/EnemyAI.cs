@@ -56,7 +56,6 @@ public class EnemyAI : MonoBehaviour {
         var gScore = new Dictionary<Int2, float>();
         var fScore = new Dictionary<Int2, float>();
 
-
         // initialize
         gScore[start] = 0;
         fScore[start] = gScore[start] + heuristicCostEstimate(start, goal);
@@ -102,20 +101,6 @@ public class EnemyAI : MonoBehaviour {
         Debug.Log("Reconstructed path = " + string.Join(",", reconstructedPath.Select(x => x.ToString()).ToArray()));
     }
 
-//    Int2[] neighborNodes(Int2 node) {
-//        var neighbors = new Int2[8];
-//        var neighborIdx = 0;
-//        for (int i = -1; i < 2; i++) {
-//            for (int j = -1; j < 2; j++) {
-//                if (i != 0 || j != 0) {
-//                    neighbors[neighborIdx] = new Int2(node.x+i, node.y+j);
-//                    neighborIdx++;
-//                }
-//            }
-//        }
-//        return neighbors;
-//    }
-
     Int2[] neighborNodes(Int2 node) {
         var neighbors = new List<Int2>();
         neighbors.Add(new Int2(node.x-1, node.y));
@@ -127,11 +112,6 @@ public class EnemyAI : MonoBehaviour {
             return !Tile.GetCollider(obj);
         });
 
-//        var neighbors = new Int2[4];
-//        neighbors[0] = new Int2(node.x-1, node.y);
-//        neighbors[1] = new Int2(node.x+1, node.y);
-//        neighbors[2] = new Int2(node.x, node.y-1);
-//        neighbors[3] = new Int2(node.x, node.y+1);
         return neighbors.ToArray();
     }
     
