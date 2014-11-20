@@ -46,6 +46,8 @@ public class NotificationCenter {
     }
 
     public void PostNotification(string notificationName) {
+        if (!keyToHandlerMap.ContainsKey(notificationName)) return;
+
         foreach (NotificationHandler handler in keyToHandlerMap[notificationName]) {
             handler();
         }
