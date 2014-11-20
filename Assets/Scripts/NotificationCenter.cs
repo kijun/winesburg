@@ -9,10 +9,12 @@ public class NotificationCenter {
 
 	private static NotificationCenter defaultCenterInstance;
 
-	public static NotificationCenter defaultCenter() {
-        if (instance == null) defaultCenterInstance = new NotificationCenter();
-        return defaultCenterInstance;
-	};
+	public static NotificationCenter defaultCenter {
+        get {
+            if (defaultCenterInstance == null) defaultCenterInstance = new NotificationCenter();
+            return defaultCenterInstance;
+        }
+	}
 
     // object properties
 
