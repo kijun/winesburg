@@ -6,11 +6,19 @@ using SpriteTile;
 
 public class EnemyAI : MonoBehaviour {
 
+    enum EnemyAIState {
+        Patrolling,
+        Chasing,
+        Recovering
+    }
+
     public float patrolSpeed = 1f;                          // The nav mesh agent's speed when patrolling.
     public float chaseSpeed = 5f;                           // The nav mesh agent's speed when chasing.
     public float chaseWaitTime = 5f;                        // The amount of time to wait when the last sighting is reached.
     public float patrolWaitTime = 1f;                       // The amount of time to wait when the patrol way point is reached.
     public Vector2[] patrolWayPoints;                     // An array of transforms for the patrol route.
+    public float maxSightDistance = 5;
+    public float fieldOfViewAngle = 110; // in degrees
 
     private SpriteNavAgent nav;
     private Transform player;                               // Reference to the player's transform.
@@ -18,34 +26,45 @@ public class EnemyAI : MonoBehaviour {
     private float patrolTimer;                              // A timer for the patrolWaitTime.
     private int wayPointIndex;                              // A counter for the way point array.
     private Int2[] reconstructedPath;
+    private EnemyAIState state; 
 
     void Awake () {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         nav = GetComponent<SpriteNavAgent>();
     }
-    
-    void Update () {
-        // If the player is in sight and is alive...
-//        if(enemySight.playerInSight && playerHealth.health > 0f)
-//            // ... shoot.
-//            Shooting();
-//        
-//        // If the player has been sighted and isn't dead...
-//        else if(enemySight.personalLastSighting != lastPlayerSighting.resetPosition && playerHealth.health > 0f)
-//            // ... chase.
-//            Chasing();
-//        
-//        // Otherwise...
-//        else
-            // ... patrol.
-            Patrolling();
 
-        if (this.GetMapPosition().Distance(player.GetMapPosition()) < 0.3) {
-            Inventory.mainInventory.RemoveItem(Enzen.InventoryKey);
+    void Update () {
+        if (state == EnemyAIState.Patrolling) {
+            if (playerInSight) {
+                state = EnemyAIState.Chasing;
+            } else {
+                Patrolling();
+            }
+        } else if (state == EnemyAIState.Chasing) {
+            Chasing();
+        } else {
+            Patrolling();
         }
     }
 
-    // asdf
+    bool playerInSight() {
+        float tileLength = Tile.GetTileSize().x;
+        if (Vector2.Distance(player.position, transform.position) / tileLength < maxSightDistance) {
+            if (Mathf.Abs(Vector2.Angle(player.position - transform.position, lineOfSight)) < 0.5 * fieldOfViewAngle) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    Vector2 lineOfSight {
+        get {
+            Vector2 currPos = transform.position;
+            Vector2 destPos = Tile.GetWorldPosition(nav.destination);
+
+            return destPos - currPos;
+        }
+    }
 
     public void generatePath() {
         Int2 start = new Int2(patrolWayPoints[0]);
@@ -118,7 +137,7 @@ public class EnemyAI : MonoBehaviour {
 
         return neighbors.ToArray();
     }
-    
+
     float heuristicCostEstimate(Int2 start, Int2 goal) {
         return Mathf.Abs(start.x - goal.x) + Mathf.Abs(start.y - goal.y);
     }
@@ -130,22 +149,21 @@ public class EnemyAI : MonoBehaviour {
     void Patrolling () {
         // Set an appropriate speed for the NavMeshAgent.
         nav.speed = patrolSpeed;
-        
+
         // If near the next waypoint or there is no destination...
-        if(nav.remainingDistance < nav.stoppingDistance)
-        {
+        if(nav.remainingDistance < nav.stoppingDistance) {
+
             // ... increment the timer.
             patrolTimer += Time.deltaTime;
-            
+
             // If the timer exceeds the wait time...
-            if(patrolTimer >= patrolWaitTime)
-            {
+            if(patrolTimer >= patrolWaitTime) {
                 // ... increment the wayPointIndex.
                 if(wayPointIndex == reconstructedPath.Length - 1)
                     wayPointIndex = 0;
                 else
                     wayPointIndex++;
-                
+
                 // Reset the timer.
                 patrolTimer = 0;
             }
@@ -153,9 +171,14 @@ public class EnemyAI : MonoBehaviour {
         else
             // If not near a destination, reset the timer.
             patrolTimer = 0;
-        
+
         // Set the destination to the patrolWayPoint.
-        Int2 d = reconstructedPath[wayPointIndex];
-        nav.destination = d;
+        nav.destination = reconstructedPath[wayPointIndex];
+    }
+
+    void Chasing () {
+        if (this.GetMapPosition().Distance(player.GetMapPosition()) < 0.3) {
+            Inventory.mainInventory.RemoveItem(Enzen.InventoryKey);
+        }
     }
 }
