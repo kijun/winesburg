@@ -6,7 +6,7 @@ public class SpriteNavAgent : MonoBehaviour {
 
     public float speed;
     public Int2 destination;
-    public float stoppingDistance = 0.3f;
+    public float stoppingDistance = 0.1f;
 
     public float remainingDistance {
         get {

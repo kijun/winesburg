@@ -35,15 +35,21 @@ public class EnemyAI : MonoBehaviour {
 
     void Update () {
         if (state == EnemyAIState.Patrolling) {
-            if (playerInSight) {
+            if (playerInSight() && Inventory.mainInventory.NumberOfItems(Enzen.InventoryKey) > 0) {
                 state = EnemyAIState.Chasing;
             } else {
                 Patrolling();
             }
         } else if (state == EnemyAIState.Chasing) {
-            Chasing();
-        } else {
+            if (playerInSight() && Inventory.mainInventory.NumberOfItems(Enzen.InventoryKey) > 0) {
+                Chasing();
+            } else {
+                state = EnemyAIState.Recovering;
+            }
+        } else if (state == EnemyAIState.Recovering) {
+            // TODO
             Patrolling();
+            state = EnemyAIState.Patrolling;
         }
     }
 
@@ -177,6 +183,7 @@ public class EnemyAI : MonoBehaviour {
     }
 
     void Chasing () {
+        nav.destination = player.GetMapPosition();
         if (this.GetMapPosition().Distance(player.GetMapPosition()) < 0.3) {
             Inventory.mainInventory.RemoveItem(Enzen.InventoryKey);
         }
