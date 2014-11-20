@@ -35,19 +35,19 @@ public class Inventory {
         NotificationCenter.defaultCenter.PostNotification(UpdateNotificationName);
     }
 
-    public void RemoveSingleItemWithKey(string key) {
+    public void RemoveItem(string key) {
         RemoveItem(key, 1);
     }
 
-    public void RemoveAllItemsWithKey(string key) {
+    public void RemoveAllItems(string key) {
         RemoveItem(key, NumberOfItems(key));
     }
 
     public void RemoveItem(string key, int numberOfItems) {
         var currItemCnt = NumberOfItems(key);
 
-        if (numberOfItems > currItemCnt || numberOfItems < 0) throw new ArgumentOutOfRangeException("invalid param " + numberOfItems);
-        currItemCnt -= numberOfItems;
+        if (numberOfItems < 0) throw new ArgumentOutOfRangeException("invalid param " + numberOfItems);
+        currItemCnt = Math.Max(currItemCnt - numberOfItems, 0);
 
         if (currItemCnt == 0) {
             inventoryData.Remove(key);

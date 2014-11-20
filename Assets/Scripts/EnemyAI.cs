@@ -39,6 +39,10 @@ public class EnemyAI : MonoBehaviour {
 //        else
             // ... patrol.
             Patrolling();
+
+        if (this.GetMapPosition().Distance(player.GetMapPosition()) < 0.3) {
+            Inventory.mainInventory.RemoveItem(Enzen.InventoryKey);
+        }
     }
 
     // asdf
